@@ -42,5 +42,21 @@ double Statistics::avgPopulation(){
 }
 
 double Statistics::avgTimeIn(){
-    double numerator = this->mu*pow(this->lambda/this->mu);
+    double aTI = avgPopulation()/this->lambda;
+    return aTI;
+}
+
+double Statistics::avgNumInQ(){
+    double aNIQ = avgPopulation() - (this->lambda/this->mu);
+    return aNIQ;
+}
+
+double Statistics::avgTimeWaiting(){
+    double aTW = avgNumInQ()/this->lambda;
+    return aTW;
+}
+
+double Statistics::RHO(){
+    double rho = this->lambda/(this->M*this->mu);
+    return rho;
 }

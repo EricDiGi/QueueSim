@@ -9,4 +9,7 @@ int main(){
     cout << S.percentIdle() << endl;
     cout << S.avgPopulation() << endl;
     cout << S.avgTimeIn() << endl;
+    cout << S.avgNumInQ() << endl;
+    cout << S.avgTimeWaiting() << endl;
+    //cout << S.RHO() << endl;
 }
