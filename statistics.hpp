@@ -11,6 +11,7 @@ class Statistics{
         double sum(int M, double l, double mu);
     public:
         void setInitialState(int n, float l, float m, int M);
+        void FULLSEND();
         double percentIdle();
         double avgPopulation();
         double avgTimeIn();

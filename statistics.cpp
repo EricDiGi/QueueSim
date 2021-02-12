@@ -60,3 +60,11 @@ double Statistics::RHO(){
     double rho = this->lambda/(this->M*this->mu);
     return rho;
 }
+
+void Statistics::FULLSEND(){
+    cout << "Po = " << percentIdle() << endl;
+    cout << "L = " << avgPopulation() << endl;
+    cout << "W = " << avgTimeIn() << endl;
+    cout << "Lq = " << avgNumInQ() << endl;
+    cout << "Wq = " << avgTimeWaiting() << endl;
+}

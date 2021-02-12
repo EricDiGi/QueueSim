@@ -12,3 +12,9 @@ clean:
 
 testStats: $(OBJECTS) testStats.cpp statistics.hpp statistics.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $^
+
+testPriority: $(OBJECTS) testPriority.cpp PriorityQ.hpp PriorityQ.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+testStore: $(OBJECTS) CompanyStore.cpp companyStore.hpp PriorityQ.cpp PriorityQ.hpp statistics.hpp statistics.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
