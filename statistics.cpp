@@ -23,6 +23,8 @@ void Statistics::setInitialState(int n, float l, float m, int M){
     this->lambda = l;
     this->mu = m;
     this->M = M;
+    this->queue = new Customer[n];
+    this->qiter = 0;
 }
 
 double Statistics::percentIdle(){
@@ -67,4 +69,15 @@ void Statistics::FULLSEND(){
     cout << "W = " << avgTimeIn() << endl;
     cout << "Lq = " << avgNumInQ() << endl;
     cout << "Wq = " << avgTimeWaiting() << endl;
+}
+
+void Statistics::putEntry(Customer c){
+    this->queue[this->qiter] = c;
+    this->qiter++;
+}
+
+void Statistics::printQ(){
+    for(int i = 0; i < this->n; i++){
+        cout << this->queue[i];
+    }
 }

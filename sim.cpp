@@ -27,7 +27,7 @@ float Simulation::nextRandInt(float avg){
 }
 
 bool Simulation::moreArrivals(){
-    return (cmade <= this->n);
+    return (cmade < this->n);
 }
 
 void Simulation::morePQ(int v){
@@ -41,10 +41,10 @@ void Simulation::morePQ(int v){
         this->PQ.put(c);
         this->cmade++;
     }
-    //cout << cmade << endl;
 }
 
 void Simulation::major(){
+    this->stat.setInitialState(this->n, this->lambda, this->mu, this->M);
     cout << "in major" << endl;
     morePQ(this->M);
     cout << "morePQ" << endl;
@@ -53,7 +53,7 @@ void Simulation::major(){
     cout << this->PQ.empty() << endl;
     while(!this->PQ.empty()){
         processNextEvent();
-        if(moreArrivals() && this->PQ.SIZE() > this->M+1)
+        if(moreArrivals() && this->PQ.SIZE() <= this->M+1)
             morePQ(this->M+1);
     }
 
@@ -91,6 +91,9 @@ void Simulation::processNextEvent(){
             this->PQ.put(c);
             serverAvail--;
         }
+        else{
+            this->stat.putEntry(c);
+        }
     }
 }
 
@@ -99,11 +102,14 @@ void Simulation::printPQ(){
 }
 
 void Simulation::make(int n, float l, float m, int M){
-    //this->PQ = Heap();
     srand((unsigned int)time(NULL));
     this->n = n; this->lambda = l;
     this->mu = m; this->M = m;
     this->amassedTime = 0;
     this->cmade = 0;
     cout << "sim built" << endl;
+}
+
+void Simulation::printStatsQ(){
+    this->stat.printQ();
 }

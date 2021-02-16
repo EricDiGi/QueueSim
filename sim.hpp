@@ -2,11 +2,13 @@
 #define sim_HPP
 
 #include "PriorityQ.hpp"
+#include "statistics.hpp"
 
 class Simulation{
     private:
         Heap PQ;
         FIFO FQ;
+        Statistics stat;
 
         int n; int M;
         float mu; float lambda;
@@ -25,6 +27,7 @@ class Simulation{
         void processNextEvent();
         void printPQ();
         void make(int n, float l, float m, int M);
+        void printStatsQ();
 };
 
 #endif
