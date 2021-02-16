@@ -18,3 +18,9 @@ testPriority: $(OBJECTS) testPriority.cpp PriorityQ.hpp PriorityQ.cpp
 
 testStore: $(OBJECTS) CompanyStore.cpp companyStore.hpp PriorityQ.cpp PriorityQ.hpp statistics.hpp statistics.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $^
+
+testStructs: $(OBJECTS) testStructs.cpp sim.hpp sim.cpp PriorityQ.cpp PriorityQ.hpp statistics.hpp statistics.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+testHeap:$(OBJECTS) testHeap.cpp PriorityQ.hpp PriorityQ.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
