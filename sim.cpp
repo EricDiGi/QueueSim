@@ -9,6 +9,12 @@ using namespace std;
 
 Simulation::Simulation(){
     srand((unsigned int)time(NULL));
+    this->currentWaitTime = 0.0;
+    this->customerWaitedCount = 0.0;
+    this->totalWaitTime = 0.0;
+    this->serviceTime = 0.0;
+    this->idleTime = 0.0;
+    this->mostRecent = 0.0;
 }
 
 Simulation::Simulation(int n, float l, float m, int M){
@@ -17,6 +23,12 @@ Simulation::Simulation(int n, float l, float m, int M){
     this->mu = m; this->M = m;
     this->amassedTime = 0;
     this->cmade = 0;
+    this->currentWaitTime = 0.0;
+    this->customerWaitedCount = 0.0;
+    this->totalWaitTime = 0.0;
+    this->serviceTime = 0.0;
+    this->idleTime = 0.0;
+    this->mostRecent = 0.0;
     cout << "sim built" << endl;
 }
 
@@ -36,36 +48,44 @@ void Simulation::morePQ(int v){
         Customer c;
         t = nextRandInt(this->lambda);
         this->amassedTime += t;
-        cout << this->amassedTime << endl;
         c.setArrival(amassedTime);
         this->PQ.put(c);
         this->cmade++;
     }
 }
 
+void Simulation::processStats(Customer &c){
+    this->currentWaitTime = c.getSOS() - c.getArrival();
+    if(this->currentWaitTime > 0){
+        this->customerWaitedCount++;
+    }
+    this->totalWaitTime += this->currentWaitTime;
+    this->serviceTime += c.getDeparture() - c.getSOS();
+    if(this->serverAvail == M && this->FQ.empty() && !this->PQ.empty()){
+        //accum idle
+        this->idleTime += (this->PQ.peek()).getArrival() - c.getDeparture();
+    }
+}
+
 void Simulation::major(){
     this->stat.setInitialState(this->n, this->lambda, this->mu, this->M);
-    cout << "in major" << endl;
     morePQ(this->M);
-    cout << "morePQ" << endl;
     this->serverAvail = this->M;
-    cout << this->PQ << endl;
-    cout << this->PQ.empty() << endl;
     while(!this->PQ.empty()){
         processNextEvent();
         if(moreArrivals() && this->PQ.SIZE() <= this->M+1)
             morePQ(this->M+1);
     }
-
-    cout << cmade << endl;
-    cout << amassedTime << endl;
 }
 
 void Simulation::processNextEvent(){
-    cout << "in EV proc" << endl;
     Customer c;
-    if(!this->FQ.empty())
-        c = this->FQ.top();
+    bool isFQ = false;
+    if(!this->FQ.empty()){
+        cout << this->FQ;
+        c = this->FQ.pull();
+        isFQ = true;
+    }
     else
         c = this->PQ.pull();
     
@@ -83,33 +103,31 @@ void Simulation::processNextEvent(){
     }
     else{
         serverAvail++;
-        if(this->FQ.inLine(c)){
-            c = this->FQ.pull();
+        processStats(c);
+        //cout << isFQ << " ";
+        if(isFQ){
+            //c = this->FQ.pull();
             float t = nextRandInt(this->mu);
-            c.setDeparture(c.getArrival()+t);
-            c.setSOS(c.getDeparture());
+            c.setSOS(c.getArrival()+t);
+            t = nextRandInt(this->mu);
+            c.setDeparture(c.getSOS()+t);
+            cout << "THIS IS AN FQ\n"; 
+            cout << c.getArrival() << "\t" << c.getSOS() << "\t" << c.getDeparture() << endl;
             this->PQ.put(c);
             serverAvail--;
-        }
-        else{
-            this->stat.putEntry(c);
         }
     }
 }
 
 void Simulation::printPQ(){
     cout << this->PQ << endl;
-}
-
-void Simulation::make(int n, float l, float m, int M){
-    srand((unsigned int)time(NULL));
-    this->n = n; this->lambda = l;
-    this->mu = m; this->M = m;
-    this->amassedTime = 0;
-    this->cmade = 0;
-    cout << "sim built" << endl;
-}
-
-void Simulation::printStatsQ(){
-    this->stat.printQ();
+    cout << "Statistics Accum. ::\n";
+    cout << this->currentWaitTime << endl;
+    cout << this->customerWaitedCount << endl;
+    cout << this->totalWaitTime << endl;
+    cout << this->serviceTime << endl;
+    cout << this->idleTime << endl;
+    cout << this->amassedTime << endl;
+    float RHO = (this->M * this->amassedTime) / this->serviceTime;
+    cout << RHO << endl;
 }

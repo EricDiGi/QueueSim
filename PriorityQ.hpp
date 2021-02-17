@@ -9,11 +9,13 @@ class Customer{
         float arrivalTime;
         float startOfServiceTime;
         float departureTime;
-        Customer * next;
+        Customer* next;
+        friend class Heap;
     public:
         Customer();
         ~Customer();
         Customer(float arrive);
+        Customer(const Customer &c);
         void setSOS(float sos);
         float getSOS();
         void setArrival(float arr);
@@ -21,10 +23,9 @@ class Customer{
         void setDeparture(float dep);
         float getDeparture();
         bool isArrival();
-        void chain(Customer *c);
+        void NEXT(Customer *c);
         Customer* NEXT();
 
-        friend class Heap;
         friend std::ostream &operator<< (std::ostream &out, const Customer &c){
             out << c.arrivalTime << "\t" << c.startOfServiceTime << "\t";
             out << c.departureTime << "\n";
@@ -38,9 +39,9 @@ class Customer{
 
 class FIFO{
     private:
-        Customer* line;
+        Customer* begin;
+        Customer* end;
         int size;
-        int rems;
     public:
         FIFO();
         ~FIFO();
@@ -51,15 +52,12 @@ class FIFO{
         bool empty();
 
         friend std::ostream &operator<< (std::ostream &out, const FIFO &l){
-            Customer c;
-            for(int i = 0; i < (l.size-l.rems); i++){
-                c = l.line[(l.rems+i)%200];
-                if(c.isArrival()){
-                    out << "+" << c.getArrival() << "\t";
-                }
-                else{
-                    out << "-" << c.getDeparture() << "\t";
-                }
+            Customer* temp = l.begin;
+            if(temp == NULL)
+                out << "Line is empty" << std::endl;
+            while(temp){
+                out << *temp << std::endl;
+                temp = temp->NEXT();
             }
             return out;
         }
@@ -74,6 +72,7 @@ class Heap{
         Heap();
         ~Heap();
 
+        Customer peek();
         void put(Customer c);
         void put(FIFO f);
         Customer pull();

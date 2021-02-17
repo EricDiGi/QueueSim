@@ -7,8 +7,7 @@
 using namespace std;
 
 int main(){
-    Simulation S = Simulation(100,5,5,5);
+    Simulation S = Simulation(5000,8,5,1);
     S.major();
     S.printPQ();
-    S.printStatsQ();
 }

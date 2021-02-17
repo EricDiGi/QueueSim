@@ -13,12 +13,20 @@ Customer::Customer(){
     this->next = NULL;
 }
 
+Customer::Customer(const Customer &c){
+    this->arrivalTime = c.arrivalTime;
+    this->startOfServiceTime = c.startOfServiceTime;
+    this->departureTime = c.departureTime;
+    this->next = NULL;
+}
+
 Customer::~Customer(){
     this->next = NULL;
 }
 
 Customer::Customer(float arrive){
     this->arrivalTime = arrive;
+    this->next = NULL;
 }
 
 void Customer::setArrival(float arr){
@@ -45,17 +53,20 @@ float Customer::getDeparture(){
 }
 
 bool Customer::isArrival(){
-    if(this->departureTime < 0 && this->startOfServiceTime < 0.0 && this->arrivalTime > 0.0){
+    if(this->departureTime < 0 && this->startOfServiceTime < 0.0 && this->arrivalTime > -1){
         return true;
     }
     return false;
 }
 
-void Customer::chain(Customer *c){
+void Customer::NEXT(Customer *c){
     this->next = c;
 }
 
 Customer* Customer::NEXT(){
+    if(this->next == NULL){
+        return NULL;
+    }
     return this->next;
 }
 /*****************************************
@@ -157,42 +168,62 @@ int Heap::countDepart(){
     return iter;
 }
 
+Customer Heap::peek(){
+    return this->summit[0];
+}
 /*******************************************
 FIFO queue
 *******************************************/
 
 FIFO::FIFO(){
-    this->line = new Customer[200];
-    this->size = 0;
-    this->rems = 0;
+    this->begin = NULL;
+    this->end = NULL;
 }
 
 FIFO::~FIFO(){
-    delete[] this->line;
+    this->end = NULL;
+    delete[] this->begin;
 }
 
 void FIFO::insert(Customer c){
-    this->line[this->size%200] = c;
-    this->size++;
-}
-
-Customer FIFO::pull(){
-    this->rems++;
-    return this->line[(this->rems-1)%200];
-}
-
-bool FIFO::empty(){
-    return (this->size - this->rems) == 0;
-}
-
-bool FIFO::inLine(Customer c){
-    for(int i = 0; i < (this->size-this->rems); i++){
-        if(c == this->line[(this->rems+i)%200])
-            return true;
-    }
-    return false;
+    Customer* t = &c;
+    if(end == NULL)
+        this->begin = t;
+    else
+        this->end->NEXT(t);
+    this->end = t;
+    //if(t != NULL)
+        //delete[] t;
 }
 
 Customer FIFO::top(){
-    return this->line[(this->rems-1)%200];
+    Customer c = Customer(*begin);
+    return c;
+}
+
+Customer FIFO::pull(){
+    if(this->begin == NULL)
+        return Customer();
+    Customer c = *this->begin;
+    if(this->begin == this->end)
+        this->begin = NULL;
+    else
+        this->begin = this->begin->NEXT();
+    return c;
+}
+
+bool FIFO::inLine(Customer c){
+    Customer* t = this->begin;
+    while(t != NULL){
+        if(*t == c){
+            return true;
+        }
+        t = t->NEXT();
+    }
+    delete t;
+    return false;
+}
+
+bool FIFO::empty(){
+    return this->begin == NULL;
 }
