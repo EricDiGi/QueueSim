@@ -2,39 +2,28 @@
 #define sim_HPP
 
 #include "PriorityQ.hpp"
-#include "statistics.hpp"
 
 class Simulation{
     private:
+        int M, n;
+        float mu, lambda;
+        
+        float massTime;
+        int numCust;
         Heap PQ;
         FIFO FQ;
-        Statistics stat;
-
-        float currentWaitTime;
-        int customerWaitedCount;
-        float totalWaitTime;
-        float serviceTime;
-        float idleTime;
-
-        float mostRecent;
-
-        int n; int M;
-        float mu; float lambda;
         
-        int cmade;
-
-        float amassedTime;
-        int serverAvail;
-        float nextRandInt(float avg);
+        int servers;
     public:
         Simulation();
         Simulation(int n, float l, float m, int M);
-        void morePQ(int v);
+        float nextRand(float avg);
         bool moreArrivals();
-        void major();
+        void putPQ(int v);
         void processNextEvent();
-        void processStats(Customer &c);
-        void printPQ();
+        void main_();
+
+
 };
 
 #endif

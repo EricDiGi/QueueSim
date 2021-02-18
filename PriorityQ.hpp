@@ -12,6 +12,7 @@ class Customer{
         Customer* next;
         friend class Heap;
     public:
+        int num;
         Customer();
         ~Customer();
         Customer(float arrive);
@@ -27,6 +28,7 @@ class Customer{
         Customer* NEXT();
 
         friend std::ostream &operator<< (std::ostream &out, const Customer &c){
+            out << c.num << "\t";
             out << c.arrivalTime << "\t" << c.startOfServiceTime << "\t";
             out << c.departureTime << "\n";
             return out;
@@ -50,6 +52,7 @@ class FIFO{
         Customer top();
         Customer pull();
         bool empty();
+        int SIZE();
 
         friend std::ostream &operator<< (std::ostream &out, const FIFO &l){
             Customer* temp = l.begin;
@@ -86,7 +89,7 @@ class Heap{
         friend std::ostream &operator<< (std::ostream &out, const Heap &h){
             out << "HEAP SUMMARY::\t";
             for(int i = 0; i < h.size; i++){
-                if(h.summit[i].isArrival()){
+                if(h.summit[i].getArrival() > h.summit[i].getDeparture()){
                     out << "+" << h.summit[i].getArrival() << "\t";
                 }
                 else{

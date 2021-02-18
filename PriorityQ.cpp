@@ -11,13 +11,15 @@ Customer::Customer(){
     this->startOfServiceTime = -1.0;
     this->departureTime = -1.0;
     this->next = NULL;
+    this->num = 0;
 }
 
 Customer::Customer(const Customer &c){
     this->arrivalTime = c.arrivalTime;
     this->startOfServiceTime = c.startOfServiceTime;
     this->departureTime = c.departureTime;
-    this->next = NULL;
+    this->num = c.num;
+    this->next = c.next;
 }
 
 Customer::~Customer(){
@@ -26,6 +28,9 @@ Customer::~Customer(){
 
 Customer::Customer(float arrive){
     this->arrivalTime = arrive;
+    this->startOfServiceTime = -1.0;
+    this->departureTime = -1.0;
+    this->num = 0;
     this->next = NULL;
 }
 
@@ -50,13 +55,6 @@ void Customer::setDeparture(float dep){
 
 float Customer::getDeparture(){
     return this->departureTime;
-}
-
-bool Customer::isArrival(){
-    if(this->departureTime < 0 && this->startOfServiceTime < 0.0 && this->arrivalTime > -1){
-        return true;
-    }
-    return false;
 }
 
 void Customer::NEXT(Customer *c){
@@ -86,9 +84,9 @@ bool Heap::doSwap(int P, int c){
     float compA = this->summit[P].departureTime;
     float compB = this->summit[c].departureTime;
 
-    if(this->summit[P].isArrival())
+    if(this->summit[P].getArrival() > this->summit[P].getDeparture())
         compA = this->summit[P].arrivalTime;
-    if(this->summit[c].isArrival())
+    if(this->summit[P].getArrival() > this->summit[P].getDeparture())
         compB = this->summit[c].arrivalTime;
 
     return compA > compB;
@@ -182,7 +180,7 @@ FIFO::FIFO(){
 
 FIFO::~FIFO(){
     this->end = NULL;
-    delete[] this->begin;
+    //delete this->begin;
 }
 
 void FIFO::insert(Customer c){
@@ -192,6 +190,7 @@ void FIFO::insert(Customer c){
     else
         this->end->NEXT(t);
     this->end = t;
+    this->size++;
     //if(t != NULL)
         //delete[] t;
 }
@@ -209,21 +208,27 @@ Customer FIFO::pull(){
         this->begin = NULL;
     else
         this->begin = this->begin->NEXT();
+    this->size--;
     return c;
 }
 
 bool FIFO::inLine(Customer c){
     Customer* t = this->begin;
+    //if(t != NULL)
+      //  return *t == c;
+    bool is = false;
     while(t != NULL){
-        if(*t == c){
-            return true;
-        }
+        if(*t == c)
+            is = true;
         t = t->NEXT();
     }
-    delete t;
-    return false;
+    return is;
 }
 
 bool FIFO::empty(){
     return this->begin == NULL;
+}
+
+int FIFO::SIZE(){
+    return this->size;
 }
